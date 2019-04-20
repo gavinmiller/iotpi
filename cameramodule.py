@@ -5,7 +5,9 @@ import os
 
 camera = PiCamera()
 
-defaultPath = "/home/pi/Desktop/Coursework/images/"
+defaultPath = os.getcwd() + "/images/"
+
+print(defaultPath)
 
 def takePhoto(savePath = defaultPath):
     todaysPath = savePath + str(datetime.datetime.now().date()) + "/"

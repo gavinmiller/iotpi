@@ -2,6 +2,8 @@ import cameramodule
 import alprinteraction
 import serverrequest
 
+# Takes a photo with the camera and returns the path to that photo
+# Stored under (directorylocation)/images/(todaysdate)/(currenttime).jpg
 def takePhoto():
     newImage = cameramodule.takePhoto()
 
@@ -9,28 +11,48 @@ def takePhoto():
 
     return newImage
 
+# Scans an image under the given path variable and returns the suspected
+# number plate and the confidence in that plate, or false if it cannot
+# find anything
 def scanImage(path):    
     #Interact with openalpr
-    #plate = alprinteraction.scanImage("/home/pi/Desktop/Coursework/images/test/vk68udv.jpg")
     plate = alprinteraction.scanImage(path)
     return plate
 
+# Sends a request to the nodejs server asking for the data from a dvla search
+# on the specified license plate
 def requestDvla(licensePlate):
     dvlaData = serverrequest.getDvlaData(licensePlate)
     return dvlaData
 
+# Gets any stored information from the nodejs server/db about the given license
+# plate
 def getVehicleFromDB(licensePlate):
     vehicleData = serverrequest.getVehicle(licensePlate)
     return vehicleData
 
+# Adds an entry time to the database for the specified license plate
+# and returns true or false if successful
+def addEntryTime(licensePlate):
+    response = serverrequest.vehicleEntry(licensePlate)
+    return response
+
+# Returns true or false depending on whether or not there are vacancies in
+# the carpark
+# (Possibly modify the output to return more details about the vacancy,
+# e.g. floor 1, left, floor 3 right etc)
+def checkVacancies():
+    return True
+
+# Begins the process to check a vehicle at the entry gate's license plate
+# in order to grant entry or not
 def authenticate():
-    #image = takePhoto()
-    #scannedPlate = scanImage(image)
-    scannedPlate = scanImage("/home/pi/Desktop/Coursework/images/test/vk68udv.jpg")
-    #scannedPlate = "VK68UDV"
+    image = takePhoto()
+    scannedPlate = scanImage(image)
+    #scannedPlate = "VK68UDV" # TEST CODE
     if scannedPlate:
         licensePlate = scannedPlate['plate']
-        #dvlaData = requestDvla(licensePlate)
+        
         vehicleDBData = getVehicleFromDB(licensePlate)
         
         if vehicleDBData and vehicleDBData['authorised']:
@@ -44,8 +66,4 @@ def authenticate():
 
     return False
 
-def addEntryTime(licensePlate):
-    allowedAccess = authenticate()
 
-    if allowedAccess:
-        response = serverrequest.vehicleEntry(licensePlate)
