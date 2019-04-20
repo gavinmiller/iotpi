@@ -37,6 +37,13 @@ def addEntryTime(licensePlate):
     response = serverrequest.vehicleEntry(licensePlate)
     return response
 
+# Adds an exit time for a vehicle that has left the carpark
+def addExitTime(licensePlate):
+    response = serverrequest.vehicleExit(licensePlate)
+    return response
+
+
+
 # Returns true or false depending on whether or not there are vacancies in
 # the carpark
 # (Possibly modify the output to return more details about the vacancy,
@@ -47,6 +54,7 @@ def checkVacancies():
 # Begins the process to check a vehicle at the entry gate's license plate
 # in order to grant entry or not
 def authenticate():
+    print("Beginning the authentication process")
     image = takePhoto()
     scannedPlate = scanImage(image)
     #scannedPlate = "VK68UDV" # TEST CODE
@@ -66,4 +74,16 @@ def authenticate():
 
     return False
 
+authenticate()
 
+# Simple test method to fill all unfilled exit times of the vehicle assosciated
+# with licenseplate lp
+def testFillExitTimes(lp):
+    counter = 0
+    while addExitTime(lp):
+        counter += 1
+        print("Exit time added: " + str(counter))
+
+    print("No more exit times after: " + str(counter))
+
+#testFillExitTimes("VK68UDV")

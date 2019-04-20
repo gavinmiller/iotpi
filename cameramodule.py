@@ -3,11 +3,13 @@ from time import sleep
 import datetime
 import os
 
+import config
+
 camera = PiCamera()
 
-defaultPath = os.getcwd() + "/images/"
+defaultPath = config.defaultImagePath
 
-print(defaultPath)
+#print(defaultPath)
 
 def takePhoto(savePath = defaultPath):
     todaysPath = savePath + str(datetime.datetime.now().date()) + "/"

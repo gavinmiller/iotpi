@@ -1,10 +1,12 @@
 import requests
 from datetime import datetime
 
-serverURL = "http://192.168.1.16:8080/"
-dvlaURL = serverURL + "dvla?licensePlate="
-authURL = serverURL + "vehicledb/getvehicle?licensePlate="
-addURL = serverURL + "vehicledb/addvehicle?licensePlate="
+import config
+
+dvlaURL = config.dvlaURL
+authURL = config.authURL
+addURL = config.addURL
+exitURL = config.exitURL
 
 def getDvlaData(licensePlate):
     request = requests.get(dvlaURL + licensePlate)
@@ -47,7 +49,17 @@ def vehicleEntry(licensePlate):
         if data:
             return data['success']
 
-        return False
+    return False
 
-vehicleEntry("VK68UDV")
-vehicleEntry("AB74CDE")
+def vehicleExit(licensePlate):
+    time = "&exitTime=" + str(datetime.now())
+    request = requests.get(exitURL + licensePlate + time)
+
+    print("Request: " + str(request))
+
+    if request.status_code == 200:
+        data = request.json()
+        if data:
+            return data['success']
+
+    return False
