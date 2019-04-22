@@ -8,6 +8,7 @@ authURL = config.authURL
 addURL = config.addURL
 exitURL = config.exitURL
 msgURL = config.messageURL
+advMsgURL = config.advMessageURL
 vacURL = config.getVacanciesURL
 
 def getDvlaData(licensePlate):
@@ -81,4 +82,8 @@ def checkVacancies():
 def sendMessage(message):
     #print("Sending message: " + message)
     requests.get(msgURL + message)
+    return
+
+def sendAdvancedMessage(statusCode, message):
+    requests.get(advMsgURL + "statusCode=" + str(statusCode) + "&message=" + message)
     return

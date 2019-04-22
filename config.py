@@ -5,7 +5,7 @@ import os
 defaultImagePath = os.getcwd() + "/images/"
 
 ### SERVER REQUEST CONSTANTS ###
-serverIP = "192.168.1.16"
+serverIP = "192.168.43.58"
 serverPort = "80"
 
 ### DO NOT CHANGE ###
@@ -15,4 +15,5 @@ authURL = serverURL + "vehicledb/getvehicle?licensePlate="
 addURL = serverURL + "vehicledb/addvehicle?licensePlate="
 exitURL = serverURL + "vehicledb/exitvehicle?licensePlate="
 messageURL = serverURL + "message?msg="
+advMessageURL = serverURL + "displayadvanced?"
 getVacanciesURL = serverURL + "getvacancies"

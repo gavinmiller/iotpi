@@ -3,7 +3,7 @@ import alprinteraction
 import serverrequest
 import time
 
-takePictureDelay = 5 # How often the process runs (roughly)
+takePictureDelay = 10 # How often the process runs (roughly)
 
 # Takes a photo with the camera and returns the path to that photo
 # Stored under (directorylocation)/images/(todaysdate)/(currenttime).jpg
@@ -52,26 +52,42 @@ def sendMessage(message):
     serverrequest.sendMessage(message)
     return
 
+# Sends a message with a status code to the server, for the display pi
+def sendAdvancedMessage(statusCode, message):
+    serverrequest.sendAdvancedMessage(statusCode, message)
+    return
+
+licensePlateGlobal = '';
+
 # Begins the process to check a vehicle at the entry gate's license plate
 # in order to grant entry or not
 def authenticate():
     print("Beginning the authentication process")
-    sendMessage("Taking photo, please wait")
+    sendAdvancedMessage(2, "Taking photo")
     image = takePhoto()
+    time.sleep(5)
     scannedPlate = scanImage(image)
     #scannedPlate = "VK68UDV" # TEST CODE
     if scannedPlate:
         licensePlate = scannedPlate['plate']
+
+        dvlaData = requestDvla(licensePlate)
+        print(dvlaData)
+        if dvlaData and not dvlaData['mot']:
+            sendAdvancedMessage(3, "No MOT!")
+            time.sleep(5)
         #licensePlate = scannedPlate # TEST CODE
         vehicleDBData = getVehicleFromDB(licensePlate)
         
         if vehicleDBData and vehicleDBData['authorised']:
              print("License plate: " + licensePlate + " is authorised!")
-             addEntryTime(licensePlate)
+             global licensePlateGlobal
+             licensePlateGlobal = licensePlate
              return True
         else:
             print("License plate: " + licensePlate + " is NOT authorised!")
-            sendMessage("You are not authorised to enter!")
+            sendAdvancedMessage(3, "Not Authorised!")
+            time.sleep(5)
     else:
         print("No plate found in image: " + image)
 
@@ -89,7 +105,7 @@ def main():
     # Sending countdown
     while currentTimer > 0:
         #print(currentTimer)
-        sendMessage(str(currentTimer) + " seconds until next picture")
+        sendMessage(str(currentTimer))
         currentTimer -= 1
         time.sleep(1)
 
@@ -98,12 +114,18 @@ def main():
     if authenticate():
         print("")
         spacesLeft = checkVacancies()
+        time.sleep(5)
         if spacesLeft > 0:
-            sendMessage("Enter")
-            
+            time.sleep(2)
+            sendAdvancedMessage(1, "Enter")
+            if len(licensePlateGlobal) > 0:
+                addEntryTime(licensePlateGlobal)
         else:
-            sendMessage("Car park full")
+            sendAdvancedMessage(3, "Car park full")
+            time.sleep(6)
         # Do something
+
+    time.sleep(5)
     main()
 
 main()

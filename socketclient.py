@@ -23,6 +23,14 @@ def on_displayMessage(displayMessage):
     # @CALUM - Insert code here to display message using variable displayMessage['message'] (Gives message of what's up)
     print("Message to display: " + str(displayMessage))
 
+# Event listener for advanced messages in JSON format
+@sio.on('displayAdvanced')
+def on_displayAdvanced(data):
+    print("Data: " + str(data))
+    if data['status_code'] == 1:
+        #do something
+        print("Something")
+
 # Connection code below
 sio.connect(serverURL) # Connects the socket to the given URL
 sio.emit('test', {'msg': 'Hello world!'}) # Sends a test message to the server
