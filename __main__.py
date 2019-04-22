@@ -40,13 +40,6 @@ def addEntryTime(licensePlate):
     response = serverrequest.vehicleEntry(licensePlate)
     return response
 
-# Adds an exit time for a vehicle that has left the carpark
-def addExitTime(licensePlate):
-    response = serverrequest.vehicleExit(licensePlate)
-    return response
-
-
-
 # Returns true or false depending on whether or not there are vacancies in
 # the carpark
 # (Possibly modify the output to return more details about the vacancy,
@@ -104,13 +97,13 @@ def main():
     
     if authenticate():
         print("")
-        '''spacesLeft = checkVacancies()
+        spacesLeft = checkVacancies()
         if spacesLeft > 0:
             sendMessage("Enter")
             
         else:
             sendMessage("Car park full")
-        # Do something'''
+        # Do something
     main()
 
 main()

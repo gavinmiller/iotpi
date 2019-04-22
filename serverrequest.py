@@ -46,7 +46,7 @@ def vehicleEntry(licensePlate):
 
     #print("Request: " + str(request))
 
-    if request.status_code == 200:
+    if not request.status_code == 404:
         data = request.json()
         if data:
             return data['success']
@@ -59,7 +59,7 @@ def vehicleExit(licensePlate):
 
     #print("Request: " + str(request))
 
-    if request.status_code == 200:
+    if not request.status_code == 404:
         data = request.json()
         if data:
             return data['success']
@@ -70,7 +70,7 @@ def checkVacancies():
     #print("Checking vacancies...")
     request = requests.get(vacURL)
 
-    if request.status_code == 200:
+    if not request.status_code == 404:
         data = request.json()
         if data:
             return data['vacancies']
