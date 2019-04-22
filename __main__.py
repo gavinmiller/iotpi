@@ -1,6 +1,9 @@
 import cameramodule
 import alprinteraction
 import serverrequest
+import time
+
+takePictureDelay = 5 # How often the process runs (roughly)
 
 # Takes a photo with the camera and returns the path to that photo
 # Stored under (directorylocation)/images/(todaysdate)/(currenttime).jpg
@@ -49,18 +52,24 @@ def addExitTime(licensePlate):
 # (Possibly modify the output to return more details about the vacancy,
 # e.g. floor 1, left, floor 3 right etc)
 def checkVacancies():
-    return True
+    return serverrequest.checkVacancies()
+
+# Sends a message to the server to send to the display Pi
+def sendMessage(message):
+    serverrequest.sendMessage(message)
+    return
 
 # Begins the process to check a vehicle at the entry gate's license plate
 # in order to grant entry or not
 def authenticate():
     print("Beginning the authentication process")
+    sendMessage("Taking photo, please wait")
     image = takePhoto()
     scannedPlate = scanImage(image)
     #scannedPlate = "VK68UDV" # TEST CODE
     if scannedPlate:
         licensePlate = scannedPlate['plate']
-        
+        #licensePlate = scannedPlate # TEST CODE
         vehicleDBData = getVehicleFromDB(licensePlate)
         
         if vehicleDBData and vehicleDBData['authorised']:
@@ -69,21 +78,39 @@ def authenticate():
              return True
         else:
             print("License plate: " + licensePlate + " is NOT authorised!")
+            sendMessage("You are not authorised to enter!")
     else:
         print("No plate found in image: " + image)
 
     return False
 
-authenticate()
 
-# Simple test method to fill all unfilled exit times of the vehicle assosciated
-# with licenseplate lp
-def testFillExitTimes(lp):
-    counter = 0
-    while addExitTime(lp):
-        counter += 1
-        print("Exit time added: " + str(counter))
+###############################
+###### Main program flow ######
+###############################
+currentTimer = takePictureDelay
 
-    print("No more exit times after: " + str(counter))
+def main():
+    global currentTimer
+    print("Beginning countdown")
+    # Sending countdown
+    while currentTimer > 0:
+        #print(currentTimer)
+        sendMessage(str(currentTimer) + " seconds until next picture")
+        currentTimer -= 1
+        time.sleep(1)
 
-#testFillExitTimes("VK68UDV")
+    currentTimer = takePictureDelay
+    
+    if authenticate():
+        print("")
+        '''spacesLeft = checkVacancies()
+        if spacesLeft > 0:
+            sendMessage("Enter")
+            
+        else:
+            sendMessage("Car park full")
+        # Do something'''
+    main()
+
+main()
