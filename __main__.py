@@ -73,7 +73,7 @@ def authenticate():
 
         dvlaData = requestDvla(licensePlate)
         print(dvlaData)
-        if dvlaData and not dvlaData['mot']:
+        if dvlaData and 'error' not in dvlaData and not dvlaData['mot']:
             sendAdvancedMessage(3, "No MOT!")
             time.sleep(5)
         #licensePlate = scannedPlate # TEST CODE
