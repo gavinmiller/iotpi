@@ -1,11 +1,15 @@
 import socketio
+import coursework
+
 
 # URL for the main nodejs server ( and port )
 serverPort = '80'
-serverURL = 'http://192.168.1.16:' + serverPort
+serverURL = 'http://192.168.43.58:' + serverPort
 
 # Initialise the socketio client
 sio = socketio.Client()
+
+
 
 # Event listener for on connect message
 @sio.on('connect')
@@ -22,14 +26,12 @@ def on_connect():
 def on_displayMessage(displayMessage):
     # @CALUM - Insert code here to display message using variable displayMessage['message'] (Gives message of what's up)
     print("Message to display: " + str(displayMessage))
+    coursework.printMessage(displayMessage)
 
-# Event listener for advanced messages in JSON format
 @sio.on('displayAdvanced')
 def on_displayAdvanced(data):
-    print("Data: " + str(data))
-    if data['status_code'] == 1:
-        #do something
-        print("Something")
+    coursework.printAdvanced(data)
+
 
 # Connection code below
 sio.connect(serverURL) # Connects the socket to the given URL
